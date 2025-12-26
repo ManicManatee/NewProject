@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">Run Tenant Operation</div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('operate') }}">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="tenant_id">Tenant</label>
+              <select class="form-select" name="tenant_id" id="tenant_id" required>
+                <option value="" disabled selected>Select a tenant</option>
+                {% for tenant in tenants %}
+                  <option value="{{ tenant.tenant_id }}" {% if tenant_id == tenant.tenant_id %}selected{% endif %}>
+                    {{ tenant.display_name or tenant.tenant_id }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="operation">Operation</label>
+              <select class="form-select" name="operation" id="operation" required>
+                <option value="list-users" {% if operation == 'list-users' %}selected{% endif %}>List users</option>
+                <option value="create-security-group" {% if operation == 'create-security-group' %}selected{% endif %}>Create security group</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="top">Users to return (for list)</label>
+              <input class="form-control" type="number" min="1" max="200" name="top" id="top" value="{{ request.form.top or 10 }}" />
+            </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-6">
+              <label class="form-label" for="group_name">Group name</label>
+              <input class="form-control" type="text" name="group_name" id="group_name" placeholder="e.g., Helpdesk Administrators" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="group_description">Group description</label>
+              <input class="form-control" type="text" name="group_description" id="group_description" placeholder="Purpose of the group" />
+            </div>
+          </div>
+          <div class="mt-3 text-end">
+            <button class="btn btn-primary" type="submit">Execute</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header">Tenants</div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          {% for tenant in tenants %}
+            <li class="list-group-item">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <strong>{{ tenant.display_name or 'Unnamed tenant' }}</strong><br />
+                  <small class="text-muted">{{ tenant.tenant_id }}</small>
+                </div>
+                <span class="badge text-bg-secondary">{{ tenant.auth.type }}</span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if result is not none %}
+  <div class="card mt-4">
+    <div class="card-header">Result (Correlation ID: {{ correlation_id }})</div>
+    <div class="card-body">
+      <pre class="mb-0">{{ result | tojson(indent=2) }}</pre>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

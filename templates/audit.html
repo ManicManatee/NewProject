@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>Recent Audit Events (showing up to {{ limit }})</span>
+    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('audit_json', limit=limit) }}">Download JSON</a>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Timestamp (UTC)</th>
+            <th scope="col">Level</th>
+            <th scope="col">Tenant</th>
+            <th scope="col">Correlation ID</th>
+            <th scope="col">Message</th>
+            <th scope="col">Extra</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in events %}
+            <tr>
+              <td><code>{{ event.timestamp }}</code></td>
+              <td><span class="badge text-bg-secondary">{{ event.level }}</span></td>
+              <td><code>{{ event.tenant_id or '—' }}</code></td>
+              <td><code>{{ event.correlation_id or '—' }}</code></td>
+              <td>{{ event.message }}</td>
+              <td><code>{{ event.extra }}</code></td>
+            </tr>
+          {% else %}
+            <tr><td colspan="6" class="text-center text-muted">No audit events yet</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
