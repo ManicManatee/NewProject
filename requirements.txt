@@ -1,0 +1,7 @@
+msal==1.28.0
+httpx==0.27.0
+pydantic==2.5.3
+PyYAML==6.0.1
+cryptography==41.0.7
+azure-identity==1.15.0
+Flask==3.0.0
